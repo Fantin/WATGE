@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WATGE", "WATGE\WATGE.vcxproj", "{79E2236C-5382-4092-A9CE-27E3AA21DC35}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WATAddon", "WATAddon\WATAddon.vcxproj", "{6510D415-84FB-459B-8D8E-D9C1FF159741}"
+	ProjectSection(ProjectDependencies) = postProject
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35} = {79E2236C-5382-4092-A9CE-27E3AA21DC35}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WATTest", "WATTest\WATTest.vcxproj", "{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6510D415-84FB-459B-8D8E-D9C1FF159741} = {6510D415-84FB-459B-8D8E-D9C1FF159741}
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35} = {79E2236C-5382-4092-A9CE-27E3AA21DC35}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Debug|x64.ActiveCfg = Debug|x64
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Debug|x64.Build.0 = Debug|x64
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Debug|x86.ActiveCfg = Debug|Win32
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Debug|x86.Build.0 = Debug|Win32
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Release|x64.ActiveCfg = Release|x64
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Release|x64.Build.0 = Release|x64
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Release|x86.ActiveCfg = Release|Win32
+		{79E2236C-5382-4092-A9CE-27E3AA21DC35}.Release|x86.Build.0 = Release|Win32
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Debug|x64.ActiveCfg = Debug|x64
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Debug|x64.Build.0 = Debug|x64
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Debug|x86.ActiveCfg = Debug|Win32
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Debug|x86.Build.0 = Debug|Win32
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Release|x64.ActiveCfg = Release|x64
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Release|x64.Build.0 = Release|x64
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Release|x86.ActiveCfg = Release|Win32
+		{6510D415-84FB-459B-8D8E-D9C1FF159741}.Release|x86.Build.0 = Release|Win32
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Debug|x64.ActiveCfg = Debug|x64
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Debug|x64.Build.0 = Debug|x64
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Debug|x86.ActiveCfg = Debug|Win32
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Debug|x86.Build.0 = Debug|Win32
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Release|x64.ActiveCfg = Release|x64
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Release|x64.Build.0 = Release|x64
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Release|x86.ActiveCfg = Release|Win32
+		{1B3AC84E-78D1-4398-8436-3B2E6E3CB64D}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
