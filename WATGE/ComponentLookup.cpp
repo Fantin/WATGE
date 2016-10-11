@@ -6,13 +6,13 @@ namespace WATGE
 {
 	ComponentLookup::ComponentLookup(EntityID_t initial_capacity, EntityID_t page_size) : page_size_(page_size)
 	{
+		EntityID_t page, entry;
+		getPageEntry(initial_capacity, page, entry);
 		// Allocate enough pages to hold initial_capacity
-		EntityID_t pagesToAdd = initial_capacity / page_size;
-		if (initial_capacity % page_size != 0)
+		while (page >= lookup_.size())
 		{
-			++pagesToAdd;
+			addPage();
 		}
-		addPages(pagesToAdd);
 	}
 
 	ComponentLookup::~ComponentLookup()
@@ -27,80 +27,38 @@ namespace WATGE
 		}
 	}
 
-	eWATError ComponentLookup::getEntry(EntityID_t eid, ComponentID_t& cid)
-	{
-		EntityID_t page, entry;
-		getPageEntry(eid, page, entry);
-		// Check range and state
-		if (page >= lookup_.size() ||
-			lookup_[page][entry] == -1)
-		{
-			cid = -1;
-			return eComponentDoesNotExist;
-		}
-		cid = lookup_[page][entry];
-		return eNoError;
-	}
-
-	eWATError ComponentLookup::hasEntry(EntityID_t eid, bool& status)
+	ComponentID_t ComponentLookup::getEntry(EntityID_t eid)
 	{
 		EntityID_t page, entry;
 		getPageEntry(eid, page, entry);
 		// Check range
-		if (page >= lookup_.size() ||
-			lookup_[page][entry] == -1)
-		{
-			status = false;
-			return eNoError;
-		}
-		status = true;
-		return eNoError;
+		return page < lookup_.size() ? lookup_[page][entry] : -1;
 	}
 
-	eWATError ComponentLookup::addEntry(EntityID_t eid, ComponentID_t cid)
+	bool ComponentLookup::hasEntry(EntityID_t eid)
+	{
+		EntityID_t page, entry;
+		getPageEntry(eid, page, entry);
+		// Check range
+		return page < lookup_.size() && lookup_[page][entry] != -1;
+	}
+
+	void ComponentLookup::editEntry(EntityID_t eid, ComponentID_t cid)
 	{
 		EntityID_t page, entry;
 		getPageEntry(eid, page, entry);
 		// Add pages if out of range
-		if (page >= lookup_.size())
+		while (page >= lookup_.size())
 		{
-			addPages(1 + page - lookup_.size());
-		}
-		// Check if already has component
-		if (lookup_[page][entry] != -1)
-		{
-			return eComponentAlreadyExists;
+			addPage();
 		}
 		lookup_[page][entry] = cid;
-		return eNoError;
 	}
 
-	eWATError ComponentLookup::removeEntry(EntityID_t eid)
+	void ComponentLookup::clearEntry(EntityID_t eid)
 	{
-		EntityID_t page, entry;
-		getPageEntry(eid, page, entry);
-		// Check range and state
-		if (page >= lookup_.size() ||
-			lookup_[page][entry] == -1)
-		{
-			return eComponentDoesNotExist;
-		}
-		lookup_[page][entry] = -1;
-		return eNoError;
-	}
-
-	eWATError ComponentLookup::changeEntry(EntityID_t eid, ComponentID_t cid)
-	{
-		EntityID_t page, entry;
-		getPageEntry(eid, page, entry);
-		// Check range and state
-		if (page >= lookup_.size() ||
-			lookup_[page][entry] == -1)
-		{
-			return eComponentDoesNotExist;
-		}
-		lookup_[page][entry] = cid;
-		return eNoError;
+		// Set entry to -1
+		editEntry(eid, -1);
 	}
 
 	void ComponentLookup::getPageEntry(EntityID_t eid, EntityID_t& page, EntityID_t& entry)
@@ -117,13 +75,5 @@ namespace WATGE
 			page[i] = -1;
 		}
 		lookup_.push_back(page);
-	}
-
-	void ComponentLookup::addPages(EntityID_t pages)
-	{
-		for (EntityID_t i = 0; i < pages; ++i)
-		{
-			addPage();
-		}
 	}
 }

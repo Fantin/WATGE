@@ -1,5 +1,6 @@
-#include "Error.h"
-#include "Entity.h"
+#pragma once
+
+#include "WATCore.h"
 
 #include <vector>
 
@@ -8,8 +9,8 @@ namespace WATGE
 	class EntityIDManager
 	{
 	public:
-		eWATError takeID(EntityID_t& eid);
-		eWATError returnID(EntityID_t eid);
+		EntityID_t takeID();
+		void returnID(EntityID_t eid);
 
 		EntityIDManager(size_t page_size = 50);
 		EntityIDManager(const EntityIDManager&) = delete;

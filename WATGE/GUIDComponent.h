@@ -2,7 +2,7 @@
 
 namespace WATGE
 {
-	typedef uint64_t EntityGUID_t;
+	typedef int64_t EntityGUID_t;
 
 	struct GUIDComponent
 	{

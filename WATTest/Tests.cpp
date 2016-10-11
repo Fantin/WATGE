@@ -5,6 +5,7 @@
 
 #include "ComponentManager.h"
 #include "EntityManager.h"
+#include "EntityHandle.h"
 
 #include <cstdio>
 #include <cassert>
@@ -24,27 +25,25 @@ namespace Test
 
 	void ComponentStoreAddGet1()
 	{
-		ComponentStore<TestObj> cs;
-		TestObj* objAdd;
-		ComponentID_t cid;
-		cs.addComponent(0, objAdd, cid);
+		ComponentStore cs(sizeof(TestObj));
+		ComponentID_t cid = cs.addComponent(0);
+		TestObj* objAdd = (TestObj*) cs.getComponent(cid);
 		objAdd->info = 123;
-		TestObj* objGet;
-		cs.getComponent(cid, objGet);
+
+		TestObj* objGet = (TestObj*) cs.getComponent(cid);
 		PRINT_ERROR(objGet->info == 123);
 	}
 
 	void ComponentStoreAddGet2()
 	{
-		ComponentStore<TestObj> cs;
+		ComponentStore cs(sizeof(TestObj));
 		const size_t test_size = 100;
 		std::array<ComponentID_t, test_size> cids;
 
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			TestObj* p;
-			ComponentID_t cid;
-			cs.addComponent(i, p, cid);
+			ComponentID_t cid = cs.addComponent(i);
+			TestObj* p = (TestObj*) cs.getComponent(cid);
 			p->info = i;
 			cids[i] = cid;
 		}
@@ -52,8 +51,7 @@ namespace Test
 		bool noError = true;
 		for (uint8_t i = 0; i < test_size; ++i)
 		{
-			TestObj* p;
-			cs.getComponent(cids[i], p);
+			TestObj* p = (TestObj*) cs.getComponent(cids[i]);
 			noError &= p->info == i;
 		}
 		PRINT_ERROR(noError);
@@ -62,10 +60,9 @@ namespace Test
 	void ComponentLookupAddGet1()
 	{
 		ComponentLookup cl;
-		cl.addEntry(0, 123);
+		cl.editEntry(0, 123);
 
-		ComponentID_t cid;
-		cl.getEntry(0, cid);
+		ComponentID_t cid = cl.getEntry(0);
 
 		PRINT_ERROR(cid == 123);
 	}
@@ -77,14 +74,13 @@ namespace Test
 
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			cl.addEntry(i, i);
+			cl.editEntry(i, i);
 		}
 
 		bool noError = true;
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			ComponentID_t cid;
-			cl.getEntry(i, cid);
+			ComponentID_t cid = cl.getEntry(i);
 			noError &= cid == i;
 		}
 		PRINT_ERROR(noError);
@@ -93,13 +89,11 @@ namespace Test
 	void ComponentLookupAddChangeGet1()
 	{
 		ComponentLookup cl;
-		cl.addEntry(0, 123);
+		cl.editEntry(0, 123);
 
-		cl.changeEntry(0, 123 * 2);
+		cl.editEntry(0, 123 * 2);
 
-		ComponentID_t cid;
-		cl.getEntry(0, cid);
-
+		ComponentID_t cid = cl.getEntry(0);
 		PRINT_ERROR(cid == 123 * 2);
 	}
 
@@ -110,19 +104,18 @@ namespace Test
 
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			cl.addEntry(i, i);
+			cl.editEntry(i, i);
 		}
 
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			cl.changeEntry(i, i * 2);
+			cl.editEntry(i, i * 2);
 		}
 
 		bool noError = true;
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			ComponentID_t cid;
-			cl.getEntry(i, cid);
+			ComponentID_t cid = cl.getEntry(i);
 			noError &= cid == i * 2;
 		}
 		PRINT_ERROR(noError);
@@ -131,11 +124,10 @@ namespace Test
 	void ComponentManagerAddGet1()
 	{
 		ComponentManager<TestObj> cm;
-		TestObj* objAdd;
-		cm.addComponent(0, objAdd);
+		cm.addComponent(0);
+		TestObj* objAdd = cm.getComponent(0);
 		objAdd->info = 123;
-		TestObj* objGet;
-		cm.getComponent(0, objGet);
+		TestObj* objGet = cm.getComponent(0);
 		PRINT_ERROR(objGet->info == 123);
 	}
 
@@ -146,15 +138,14 @@ namespace Test
 		const size_t test_size = 100;
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			TestObj* objAdd;
-			cm.addComponent(i, objAdd);
+			cm.addComponent(i);
+			TestObj* objAdd = cm.getComponent(i);
 			objAdd->info = i;
 		}
 		bool noError = true;
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			TestObj* objGet;
-			cm.getComponent(i, objGet);
+			TestObj* objGet = cm.getComponent(i);
 			noError &= objGet->info == i;
 		}
 		PRINT_ERROR(noError);
@@ -163,14 +154,15 @@ namespace Test
 	void ComponentManagerAddRemoveAddGet1()
 	{
 		ComponentManager<TestObj> cm;
+		cm.addComponent(0);
 		TestObj* objAdd;
-		cm.addComponent(0, objAdd);
+		objAdd = cm.getComponent(0);
 		objAdd->info = 123;
 		cm.removeComponent(0);
-		cm.addComponent(0, objAdd);
+		cm.addComponent(0);
+		objAdd = cm.getComponent(0);
 		objAdd->info = 123 * 2;
-		TestObj* objGet;
-		cm.getComponent(0, objGet);
+		TestObj* objGet = cm.getComponent(0);
 		PRINT_ERROR(objGet->info == 123 * 2);
 	}
 
@@ -181,8 +173,8 @@ namespace Test
 		const size_t test_size = 100;
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			TestObj* objAdd;
-			cm.addComponent(i, objAdd);
+			cm.addComponent(i);
+			TestObj* objAdd = cm.getComponent(i);
 			objAdd->info = i;
 		}
 		for (size_t i = 0; i < test_size; ++i)
@@ -191,15 +183,14 @@ namespace Test
 		}
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			TestObj* objAdd;
-			cm.addComponent(i, objAdd);
+			cm.addComponent(i);
+			TestObj* objAdd = cm.getComponent(i);
 			objAdd->info = i * 2;
 		}
 		bool noError = true;
 		for (size_t i = 0; i < test_size; ++i)
 		{
-			TestObj* objGet;
-			cm.getComponent(i, objGet);
+			TestObj* objGet = cm.getComponent(i);
 			noError &= objGet->info == i * 2;
 		}
 		PRINT_ERROR(noError);
@@ -227,7 +218,8 @@ namespace Test
 			{
 				value = -value;
 			}
-			cm.addComponent(i, objAdd);
+			cm.addComponent(i);
+			objAdd = cm.getComponent(i);
 			objAdd->info = value;
 			values[i] = value;
 		}
@@ -245,8 +237,8 @@ namespace Test
 			// Replace if removed
 			if (values[obj] == -1)
 			{
-				TestObj* addObj;
-				cm.addComponent(obj, addObj);
+				cm.addComponent(obj);
+				TestObj* addObj = cm.getComponent(obj);
 				addObj->info = value;
 				values[obj] = value;
 			}
@@ -255,8 +247,7 @@ namespace Test
 				// Maybe change if present
 				if (value % 2 == 0)
 				{
-					TestObj* getObj;
-					cm.getComponent(obj, getObj);
+					TestObj* getObj = cm.getComponent(obj);
 					getObj->info = value;
 					values[obj] = value;
 				}
@@ -273,8 +264,7 @@ namespace Test
 		bool noError = true;
 		for (int i = 0; i < test_size; i++)
 		{
-			TestObj* getObj;
-			cm.getComponent(i, getObj);
+			TestObj* getObj = cm.getComponent(i);
 			if (getObj == nullptr)
 			{
 				noError &= values[i] == -1;
@@ -289,13 +279,12 @@ namespace Test
 
 	void EntityManagerMake()
 	{
-		EntityManager* em;
-		EntityManager::makeManager<>(em);
-		EntityHandle eh1;
-		em->makeEntity(eh1);
+		eWATError e;
+		EntityManager* em = EntityManager::makeManager<>(e);
+		EntityHandle eh1 = EntityHandle::makeEntity(em, e);
 		bool noError1 = (eh1.eid_ == 0) && (eh1.guid_ == 0);
-		EntityHandle eh2;
-		em->makeEntity(eh2);
+		EntityHandle eh2 = EntityHandle::makeEntity(em, e);
+		EntityHandle eh3 = EntityHandle::makeEntity(em, e);
 		bool noError2 = (eh2.eid_ == 1) && (eh2.guid_ == 1);
 		bool noError = noError1 && noError2;
 		PRINT_ERROR(noError);
@@ -304,28 +293,24 @@ namespace Test
 
 	void EntityManagerAddRemove()
 	{
-		EntityManager* em;
-		EntityManager::makeManager<>(em);
-		EntityHandle eh1;
-		em->makeEntity(eh1);
-		em->removeEntity(eh1);
-		EntityHandle eh2;
-		em->makeEntity(eh2);
-		PRINT_ERROR(eh2.guid_ = eh2.guid_ + 1);
+		eWATError e;
+		EntityManager* em = EntityManager::makeManager<>(e);
+		EntityHandle eh1 = EntityHandle::makeEntity(em, e);
+		eh1.deleteEntity(e);
+		EntityHandle eh2 = EntityHandle::makeEntity(em, e);
+		PRINT_ERROR(eh2.guid_ == eh1.guid_ + 1);
 		delete em;
 	}
 
 	void EntityManagerAddComponent1()
 	{
-		EntityManager* em;
-		EntityManager::makeManager<TestObj>(em);
-		EntityHandle eh;
-		em->makeEntity(eh);
-		TestObj* obj;
-		em->addComponent(eh, obj);
+		eWATError e;
+		EntityManager* em= EntityManager::makeManager<TestObj>(e);
+		EntityHandle eh = EntityHandle::makeEntity(em, e);
+		eh.addComponent<TestObj>(e);
+		TestObj* obj = eh.getComponent<TestObj>(e);
 		obj->info = 123;
-		TestObj* getObj;
-		em->getComponent(eh, getObj);
+		TestObj* getObj = eh.getComponent<TestObj>(e);
 		PRINT_ERROR(getObj->info == 123);
 		delete em;
 	}

@@ -1,10 +1,6 @@
 #pragma once
 
-#include "Entity.h"
-#include "Component.h"
-
-#include "Error.h"
-
+#include "WATCore.h"
 #include <vector>
 
 namespace WATGE
@@ -16,11 +12,10 @@ namespace WATGE
 		ComponentLookup(const ComponentLookup&) = delete;
 		~ComponentLookup();
 
-		eWATError getEntry(EntityID_t eid, ComponentID_t& cid);
-		eWATError hasEntry(EntityID_t eid, bool& status);
-		eWATError addEntry(EntityID_t eid, ComponentID_t cid);
-		eWATError removeEntry(EntityID_t eid);
-		eWATError changeEntry(EntityID_t eid, ComponentID_t cid);
+		ComponentID_t getEntry(EntityID_t eid);
+		bool hasEntry(EntityID_t eid);
+		void editEntry(EntityID_t eid, ComponentID_t cid);
+		void clearEntry(EntityID_t eid);
 
 	private:
 
@@ -29,6 +24,5 @@ namespace WATGE
 
 		void getPageEntry(EntityID_t eid, EntityID_t& page, EntityID_t& entry);
 		void addPage();
-		void addPages(EntityID_t pages);
 	};
 }

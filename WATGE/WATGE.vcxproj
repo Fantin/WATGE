@@ -131,25 +131,29 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentLookup.h" />
     <ClInclude Include="ComponentManager.h" />
     <ClInclude Include="ComponentStore.h" />
-    <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityHandle.h" />
     <ClInclude Include="EntityIDManager.h" />
+    <ClInclude Include="EntityIterator.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="Error.h" />
     <ClInclude Include="GUIDComponent.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="System.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Types.h" />
     <ClInclude Include="WATCore.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ComponentLookup.cpp" />
     <ClCompile Include="ComponentManager.cpp" />
     <ClCompile Include="ComponentStore.cpp" />
+    <ClCompile Include="EntityHandle.cpp" />
     <ClCompile Include="EntityIDManager.cpp" />
+    <ClCompile Include="EntityIterator.cpp" />
     <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="GUIDComponent.cpp" />
     <ClCompile Include="Manager.cpp" />
@@ -159,6 +163,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="System.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

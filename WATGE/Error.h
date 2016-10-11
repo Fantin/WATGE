@@ -11,6 +11,8 @@ namespace WATGE
 		eComponentDoesNotExist,
 		eComponentAlreadyExists,
 		eComponentClassNotSupported,
-		eComponentClassAlreadySupported
+		eComponentClassAlreadySupported,
+		eManagerNotSupported,
+		eManagerAlreadySupported
 	};
 }

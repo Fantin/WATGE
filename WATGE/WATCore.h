@@ -1,4 +1,5 @@
 #pragma once
+
 //
 //#ifdef WATGE_EXPORTS
 //#define WATAPI __declspec(dllexport)
@@ -7,3 +8,4 @@
 //#endif
 
 #include "Error.h"
+#include "Types.h"

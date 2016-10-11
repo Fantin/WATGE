@@ -4,64 +4,42 @@
 
 namespace WATGE
 {
-	eWATError EntityManager::supportsEntity(EntityHandle eh, bool& status)
-	{
-		GUIDComponent* guidc;
-		eWATError e = getComponent(eh.eid_, guidc);
-		if (e != eNoError)
-		{
-			status = false;
-			return eEntityDoesNotExist;
-		}
-		if (guidc->guid_ != eh.guid_)
-		{
-			status = false;
-			return eEntityDoesNotExist;
-		}
-		status = true;
-		return eNoError;
-	}
-
-	eWATError EntityManager::makeEntity(EntityHandle& eh)
-	{
-		EntityID_t eid;
-		eWATError e = id_manager_.takeID(eid);
-		if (e != eNoError)
-		{
-			return e;
-		}
-		GUIDComponent* guidc;
-		e = addComponent<GUIDComponent>(eid, guidc);
-		if (e != eNoError)
-		{
-			return e;
-		}
-		guidc->guid_ = GUIDComponent::getNextGUID();
-
-		eh.eid_ = eid;
-		eh.guid_ = guidc->guid_;
-
-		return eNoError;
-	}
-
-	eWATError EntityManager::removeEntity(EntityHandle eh)
-	{
-		bool status;
-		eWATError e = supportsEntity(eh, status);
-		if (e != eNoError)
-		{
-			return e;
-		}
-		for (auto it = managers_.begin(); it != managers_.end(); ++it)
-		{
-			(*it)->removeComponent(eh.eid_);
-		}
-		id_manager_.returnID(eh.eid_);
-		return eNoError;
-	}
-
 	void EntityManager::MakeManagerHelper<>::makeManagerHelper(EntityManager* em)
 	{
 		return;
+	}
+
+	bool EntityManager::supportsEntity(EntityID_t eid, EntityGUID_t guid, eWATError& error)
+	{
+		GUIDComponent* guidc = getComponent<GUIDComponent>(eid);
+		// Check component existence and match
+		error = eNoError;
+		return guidc != nullptr && guidc->guid_ == guid;
+	}
+
+	void EntityManager::makeEntity(EntityID_t& eid, EntityGUID_t& guid)
+	{
+		eid = id_manager_.takeID();
+		addComponent<GUIDComponent>(eid);
+		GUIDComponent* guidc = getComponent<GUIDComponent>(eid);
+		guidc->guid_ = GUIDComponent::getNextGUID();
+		guid = guidc->guid_;
+	}	
+	bool EntityManager::removeEntity(EntityID_t eid, EntityGUID_t guid)
+	{
+		GUIDComponent* guidc = getComponent<GUIDComponent>(eid);
+		if (guidc == nullptr || guidc->guid_ != guid)
+		{
+			return false;
+		}
+		for (auto it = managers_.begin(); it != managers_.end(); ++it)
+		{
+			if ((*it) != nullptr)
+			{
+				(*it)->removeComponent(eid);
+			}
+		}
+		id_manager_.returnID(eid);
+		return true;
 	}
 }
