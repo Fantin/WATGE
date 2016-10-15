@@ -2,10 +2,8 @@
 
 #include "WATCore.h"
 
-#include "ComponentLookup.h"
-#include "ComponentStore.h"
-
 #include <cstdint>
+#include <atomic>
 #include <type_traits>
 #include <vector>
 
@@ -15,9 +13,8 @@ namespace WATGE
 	{
 	public:
 		virtual ~IComponentManager();
-		virtual bool removeComponent(EntityID_t eid) = 0;
 	protected:
-		static ComponentClassID_t next_id;
+		static ComponentClassID_t next_id();
 	};
 
 	template <class T>
@@ -29,89 +26,150 @@ namespace WATGE
 
 		static const ComponentClassID_t getID();
 
+		bool hasComponent(EntityID_t eid);
 		T* getComponent(EntityID_t eid);
 		bool addComponent(EntityID_t eid);
-		bool removeComponent(EntityID_t eid) override;
+		template <class... Args>
+		T* addCreateComponent(EntityID_t eid, Args... args);
+		bool removeComponent(EntityID_t eid);
 
 	private:
-		ComponentLookup lookup_;
-		ComponentStore store_;
+		bool getBit(EntityID_t eid);
+		bool setBit(EntityID_t eid);
+		bool clearBit(EntityID_t eid);
+		static const size_t page_size = 64;
+
+		std::vector<uint64_t> component_usage_;
+		std::vector<size_t> entry_count_;
+		std::vector<T*> components_;
 	};
 
+	template<class T>
+	ComponentManager<T>::ComponentManager()
+	{
+	}
+
+	template<class T>
+	const ComponentClassID_t ComponentManager<T>::getID()
+	{
+		static const ComponentClassID_t id = next_id();
+		return id;
+	}
+
 	template <class T>
-	inline ComponentManager<T>::ComponentManager() :
-		lookup_(), store_(sizeof(T))
+	bool ComponentManager<T>::hasComponent(EntityID_t eid)
 	{
+		return getBit(eid);
 	}
 
-	template<class T>
-	inline const ComponentClassID_t ComponentManager<T>::getID()
+	template <class T>
+	T* ComponentManager<T>::getComponent(EntityID_t eid)
 	{
-		static const ComponentClassID_t class_id = next_id++;
-		return class_id;
-	}
-
-	template<class T>
-	inline T* ComponentManager<T>::getComponent(EntityID_t eid)
-	{
-		// Search the lookup table
-		ComponentID_t cid = lookup_.getEntry(eid);
-		return cid != -1 ? (T*) store_.getComponent(cid) : nullptr;
-	}
-
-	template<class T>
-	inline bool ComponentManager<T>::addComponent(EntityID_t eid)
-	{
-		// Check if component already exists
-		if (lookup_.hasEntry(eid))
+		if (!getBit(eid))
 		{
-			// Operation failed
+			return nullptr;
+		}
+		EntityID_t page, entry;
+		page = eid / page_size;
+		entry = eid % page_size;
+		return components_[page] + entry;
+	}
+
+	template <class T>
+	bool ComponentManager<T>::addComponent(EntityID_t eid)
+	{
+		if (getBit(eid))
+		{
 			return false;
 		}
-		// Add component
-		ComponentID_t cid = store_.addComponent(eid);
-		// Add id to lookup
-		lookup_.editEntry(eid, cid);
-		// Operation succeeded
+		setBit(eid);
+		EntityID_t page = eid / page_size;
+		if (entry_count_[page] == 0)
+		{
+			components_[page] = static_cast<T*>(malloc(sizeof(T) * page_size));
+		}
+		entry_count_[page]++;
 		return true;
 	}
 
-	template<class T>
-	inline bool ComponentManager<T>::removeComponent(EntityID_t eid)
+	template <class T>
+	template <class... Args>
+	T* ComponentManager<T>::addCreateComponent(EntityID_t eid, Args... args)
 	{
-		//// Search the lookup table
-		//ComponentID_t cid;
-		//lookup_.getEntry(eid, cid);
-		//if (cid == -1)
-		//{
-		//	return eComponentDoesNotExist;
-		//}
-		//// Remove from the store
-		//EntityID_t moved_eid;
-		//store_.removeComponent(cid, moved_eid);
-		//// Update the lookup table
-		//lookup_.clearEntry(eid);
-		//// Check if last was removed
-		//if (eid != moved_eid)
-		//{
-		//	lookup_.editEntry(moved_eid, cid);
-		//}
-		//return eNoError;
-
-		// Check if component exists
-		if (!lookup_.hasEntry(eid))
+		if (getBit(eid))
 		{
-			// Operation failed
+			return nullptr;
+		}
+		setBit(eid);
+		EntityID_t page = eid / page_size;
+		EntityID_t entry = eid % page_size;
+		if (entry_count_[page] == 0)
+		{
+			components_[page] = static_cast<T*>(malloc(sizeof(T) * page_size));
+		}
+		entry_count_[page]++;
+		return new(components_[page] + entry) T(args...);
+	}
+
+	template<class T>
+	bool ComponentManager<T>::removeComponent(EntityID_t eid)
+	{
+		if (!getBit(eid))
+		{
 			return false;
 		}
-		ComponentID_t cid = lookup_.getEntry(eid);
-		// Remove component based off lookup id
-		EntityID_t moved_eid = store_.removeComponent(lookup_.getEntry(eid));
-		// Edit moved component entry
-		lookup_.editEntry(moved_eid, cid);
-		// Clear old entry
-		lookup_.clearEntry(eid);
-		// Operation succeeded
+		clearBit(eid);
+		EntityID_t page = eid / page_size;
+		entry_count_[page]--;
+		if (entry_count_[page] == 0)
+		{
+			free(components_[page]);
+			components_[page] = nullptr;
+		}
 		return true;
 	}
+
+	template <class T>
+	bool ComponentManager<T>::getBit(EntityID_t eid)
+	{
+		size_t chunk = eid / 64;
+		size_t bit = eid % 64;
+		if (chunk >= component_usage_.size())
+		{
+			return false;
+		}
+		return (component_usage_[chunk] >> bit) & 1ULL;
+	}
+
+	template <class T>
+	bool ComponentManager<T>::setBit(EntityID_t eid)
+	{
+		size_t chunk = eid / 64;
+		size_t bit = eid % 64;
+		if (chunk >= component_usage_.size())
+		{
+			component_usage_.resize(chunk + 1, 0);
+			entry_count_.resize(chunk + 1, 0);
+			components_.resize(chunk + 1, nullptr);
+		}
+		bool old = (component_usage_[chunk] >> bit) & 1ULL;
+		component_usage_[chunk] |= (1ULL << bit);
+		return old;
+	}
+
+	template <class T>
+	bool ComponentManager<T>::clearBit(EntityID_t eid)
+	{
+		size_t chunk = eid / 64;
+		size_t bit = eid % 64;
+		if (chunk >= component_usage_.size())
+		{
+			return false;
+		}
+		bool old = (component_usage_[chunk] >> bit) & 1ULL;
+		component_usage_[chunk] &= ~(1ULL << bit);
+		return old;
+	}
+
+
 }

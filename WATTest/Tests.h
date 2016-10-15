@@ -10,12 +10,6 @@
 namespace Test
 {
 #endif
-	TEST_FUN(void, ComponentStoreAddGet1);
-	TEST_FUN(void, ComponentStoreAddGet2);
-	TEST_FUN(void, ComponentLookupAddGet1);
-	TEST_FUN(void, ComponentLookupAddGet2);
-	TEST_FUN(void, ComponentLookupAddChangeGet1);
-	TEST_FUN(void, ComponentLookupAddChangeGet2);
 	TEST_FUN(void, ComponentManagerAddGet1);
 	TEST_FUN(void, ComponentManagerAddGet2);
 	TEST_FUN(void, ComponentManagerAddRemoveAddGet1);

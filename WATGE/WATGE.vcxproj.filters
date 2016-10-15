@@ -39,12 +39,6 @@
     <ClInclude Include="Manager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentStore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentLookup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GUIDComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,12 +69,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentStore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentLookup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUIDComponent.cpp">

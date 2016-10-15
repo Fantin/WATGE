@@ -78,6 +78,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PreprocessToFile>false</PreprocessToFile>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,9 +132,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ComponentLookup.h" />
     <ClInclude Include="ComponentManager.h" />
-    <ClInclude Include="ComponentStore.h" />
     <ClInclude Include="EntityHandle.h" />
     <ClInclude Include="EntityIDManager.h" />
     <ClInclude Include="EntityIterator.h" />
@@ -148,9 +147,7 @@
     <ClInclude Include="WATCore.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ComponentLookup.cpp" />
     <ClCompile Include="ComponentManager.cpp" />
-    <ClCompile Include="ComponentStore.cpp" />
     <ClCompile Include="EntityHandle.cpp" />
     <ClCompile Include="EntityIDManager.cpp" />
     <ClCompile Include="EntityIterator.cpp" />

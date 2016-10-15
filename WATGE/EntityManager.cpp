@@ -4,17 +4,15 @@
 
 namespace WATGE
 {
-	void EntityManager::MakeManagerHelper<>::makeManagerHelper(EntityManager* em)
+	EntityManager::EntityManager()
 	{
-		return;
+
 	}
 
-	bool EntityManager::supportsEntity(EntityID_t eid, EntityGUID_t guid, eWATError& error)
+	bool EntityManager::hasEntity(EntityID_t eid)
 	{
 		GUIDComponent* guidc = getComponent<GUIDComponent>(eid);
-		// Check component existence and match
-		error = eNoError;
-		return guidc != nullptr && guidc->guid_ == guid;
+		return guidc != nullptr;
 	}
 
 	void EntityManager::makeEntity(EntityID_t& eid, EntityGUID_t& guid)
@@ -25,20 +23,16 @@ namespace WATGE
 		guidc->guid_ = GUIDComponent::getNextGUID();
 		guid = guidc->guid_;
 	}	
-	bool EntityManager::removeEntity(EntityID_t eid, EntityGUID_t guid)
+	bool EntityManager::deleteEntity(EntityID_t eid)
 	{
+		bool success = removeComponent<GUIDComponent>(eid);
+
 		GUIDComponent* guidc = getComponent<GUIDComponent>(eid);
-		if (guidc == nullptr || guidc->guid_ != guid)
+		if (guidc == nullptr)
 		{
 			return false;
 		}
-		for (auto it = managers_.begin(); it != managers_.end(); ++it)
-		{
-			if ((*it) != nullptr)
-			{
-				(*it)->removeComponent(eid);
-			}
-		}
+		guidc->guid_ = -1;
 		id_manager_.returnID(eid);
 		return true;
 	}
