@@ -1,27 +1,13 @@
-#ifdef TEST_CALL
-#undef TEST_FUN
-#define TEST_FUN(returnType, functionName) Test::##functionName##()
-#else
-#undef TEST_FUN
-#define TEST_FUN(returnType, functionName) returnType functionName##()
-#endif
+#pragma once
 
-#ifndef TEST_CALL
 namespace Test
 {
-#endif
-	TEST_FUN(void, ComponentManagerAddGet1);
-	TEST_FUN(void, ComponentManagerAddGet2);
-	TEST_FUN(void, ComponentManagerAddRemoveAddGet1);
-	TEST_FUN(void, ComponentManagerAddRemoveAddGet2);
-	TEST_FUN(void, ComponentManagerRandomUsage);
-	TEST_FUN(void, EntityManagerMake);
-	TEST_FUN(void, EntityManagerAddRemove);
-	TEST_FUN(void, EntityManagerAddComponent1);
-#ifndef TEST_CALL
+	void ComponentManagerAddGet1();
+	void ComponentManagerAddGet2();
+	void ComponentManagerAddRemoveAddGet1();
+	void ComponentManagerAddRemoveAddGet2();
+	void ComponentManagerRandomUsage();
+	void EntityManagerMake();
+	void EntityManagerAddRemove();
+	void EntityManagerAddComponent1();
 };
-#endif
-
-#ifdef TEST_CALL
-#undef TEST_CALL
-#endif

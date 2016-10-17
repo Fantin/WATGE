@@ -1,14 +1,19 @@
 #include <cstdio>
 #include <vector>
-#include <windows.h>
 
 #include "Tests.h"
 
 int main()
 {
 	printf("Start.\n");
-#define TEST_CALL
-#include "Tests.h"
+	Test::ComponentManagerAddGet1();
+	Test::ComponentManagerAddGet2();
+	Test::ComponentManagerAddRemoveAddGet1();
+	Test::ComponentManagerAddRemoveAddGet2();
+	Test::ComponentManagerRandomUsage();
+	Test::EntityManagerMake();
+	Test::EntityManagerAddRemove();
+	Test::EntityManagerAddComponent1();
 	printf("Done.\n");
 	return 0;
 }

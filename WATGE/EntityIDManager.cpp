@@ -1,6 +1,9 @@
+#ifdef _WIN32
 #include "stdafx.h"
+#endif
 
 #include "EntityIDManager.h"
+#include <cstdlib>
 
 namespace WATGE
 {
@@ -12,7 +15,7 @@ namespace WATGE
 			return next_id_++;
 		}
 		// Otherwise remove and use the last one that was returned
-		size_t page, entry;
+		std::size_t page, entry;
 		getPageEntry(free_id_count_ - 1, page, entry);
 		--free_id_count_;
 		return free_ids_[page][entry];
@@ -25,14 +28,14 @@ namespace WATGE
 		{
 			addPage();
 		}
-		size_t page, entry;
+		std::size_t page, entry;
 		getPageEntry(free_id_count_, page, entry);
 		free_ids_[page][entry] = eid;
 		++free_id_count_;
 	}
 
 	// TODO: Initial page count
-	EntityIDManager::EntityIDManager(size_t page_size) : page_size_(page_size)
+	EntityIDManager::EntityIDManager(std::size_t page_size) : page_size_(page_size)
 	{
 		next_id_ = 0;
 		free_id_count_ = 0;
@@ -47,7 +50,7 @@ namespace WATGE
 		}
 	}
 
-	void EntityIDManager::getPageEntry(size_t index, size_t & page, size_t & entry)
+	void EntityIDManager::getPageEntry(std::size_t index, std::size_t & page, std::size_t & entry)
 	{
 		page = index / page_size_;
 		entry = index % page_size_;
@@ -60,9 +63,9 @@ namespace WATGE
 		free_ids_.push_back(page);
 	}
 
-	void EntityIDManager::addPages(size_t pages)
+	void EntityIDManager::addPages(std::size_t pages)
 	{
-		for (size_t i = 0; i < pages; ++i)
+		for (std::size_t i = 0; i < pages; ++i)
 		{
 			addPage();
 		}

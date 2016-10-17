@@ -54,7 +54,7 @@ namespace WATGE
 		ComponentClassID_t class_id = ComponentManager<T>::getID();
 		if (class_id >= managers_.size())
 		{
-			return false;
+			return nullptr;
 		}
 		ComponentManager<T>* cm = 
 			static_cast<ComponentManager<T>*> (managers_[class_id]);

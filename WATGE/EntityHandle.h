@@ -75,7 +75,7 @@ namespace WATGE
 		if (!validGUID())
 		{
 			error = eEntityDoesNotExist;
-			return false;
+			return nullptr;
 		}
 		T* component = em_->addCreateComponent<T>(eid_, args...);
 		error = component != nullptr ? eNoError : eComponentAlreadyExists;

@@ -3,6 +3,7 @@
 #include "WATCore.h"
 
 #include <cstdint>
+#include <cstdlib>
 #include <atomic>
 #include <type_traits>
 #include <vector>
@@ -37,10 +38,10 @@ namespace WATGE
 		bool getBit(EntityID_t eid);
 		bool setBit(EntityID_t eid);
 		bool clearBit(EntityID_t eid);
-		static const size_t page_size = 64;
+		static const std::size_t page_size = 64;
 
 		std::vector<uint64_t> component_usage_;
-		std::vector<size_t> entry_count_;
+		std::vector<std::size_t> entry_count_;
 		std::vector<T*> components_;
 	};
 
@@ -132,8 +133,8 @@ namespace WATGE
 	template <class T>
 	bool ComponentManager<T>::getBit(EntityID_t eid)
 	{
-		size_t chunk = eid / 64;
-		size_t bit = eid % 64;
+		std::size_t chunk = eid / 64;
+		std::size_t bit = eid % 64;
 		if (chunk >= component_usage_.size())
 		{
 			return false;
@@ -144,8 +145,8 @@ namespace WATGE
 	template <class T>
 	bool ComponentManager<T>::setBit(EntityID_t eid)
 	{
-		size_t chunk = eid / 64;
-		size_t bit = eid % 64;
+		std::size_t chunk = eid / 64;
+		std::size_t bit = eid % 64;
 		if (chunk >= component_usage_.size())
 		{
 			component_usage_.resize(chunk + 1, 0);
@@ -160,8 +161,8 @@ namespace WATGE
 	template <class T>
 	bool ComponentManager<T>::clearBit(EntityID_t eid)
 	{
-		size_t chunk = eid / 64;
-		size_t bit = eid % 64;
+		std::size_t chunk = eid / 64;
+		std::size_t bit = eid % 64;
 		if (chunk >= component_usage_.size())
 		{
 			return false;
