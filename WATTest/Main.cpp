@@ -1,11 +1,32 @@
 #include <cstdio>
 #include <vector>
 
+#include <cstdlib>
+#include <dlfcn.h>
+
 #include "Tests.h"
 
 int main()
 {
 	printf("Start.\n");
+
+	void *handle;
+	int (*doStuff)();
+	char *error;
+	handle = dlopen ("./libwataddon.so", RTLD_LAZY);
+	if (!handle) {
+	   fprintf (stderr, "%s\n", dlerror());
+	   return 1;
+	}
+	dlerror();    /* Clear any existing error */
+	doStuff = (int(*)()) dlsym(handle, "doStuff");
+	if ((error = dlerror()) != NULL)  {
+	   fprintf (stderr, "%s\n", error);
+	   return 1;
+	}
+	printf ("%d\n", doStuff());
+	dlclose(handle);
+
 	Test::ComponentManagerAddGet1();
 	Test::ComponentManagerAddGet2();
 	Test::ComponentManagerAddRemoveAddGet1();
