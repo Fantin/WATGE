@@ -1,9 +1,4 @@
-#ifdef _WIN32
-#include "stdafx.h"
-#endif
-
 #include "ComponentManager.h"
-#include <atomic>
 
 namespace WATGE
 {

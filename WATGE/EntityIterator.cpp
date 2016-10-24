@@ -1,7 +1,3 @@
-#ifdef _WIN32
-#include "stdafx.h"
-#endif
-
 #include "EntityIterator.h"
 
 namespace WATGE
